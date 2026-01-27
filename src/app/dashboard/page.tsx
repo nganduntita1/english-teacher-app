@@ -64,10 +64,10 @@ export default function DashboardPage() {
           {/* Header */}
           <div className="mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-emerald-900 mb-2">
-              Bon retour ! 👋
+              Bon retour, {(user as any)?.user_metadata?.full_name || user?.email?.split('@')[0] || 'ami'} ! 👋
             </h1>
             <p className="text-lg text-slate-600 font-medium">
-              {user?.email}
+              Continuez votre apprentissage
             </p>
           </div>
 
