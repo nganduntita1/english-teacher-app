@@ -1,0 +1,60 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "lessons": "Leçons",
+    "vocabulary": "Vocabulaire",
+    "quizzes": "Quizzes",
+    "dashboard": "Tableau de bord",
+    "logout": "Se déconnecter",
+    "login": "Se connecter",
+    "signup": "S'inscrire"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "login": "Se connecter",
+    "signup": "S'inscrire",
+    "forgotPassword": "Mot de passe oublié?",
+    "noAccount": "Pas encore de compte?",
+    "haveAccount": "Vous avez déjà un compte?",
+    "loginSuccess": "Connexion réussie!",
+    "signupSuccess": "Inscription réussie! Veuillez vérifier votre email.",
+    "loginError": "Erreur de connexion",
+    "signupError": "Erreur lors de l'inscription"
+  },
+  "lessons": {
+    "title": "Leçons d'anglais",
+    "description": "Apprenez les bases de l'anglais",
+    "lesson": "Leçon",
+    "complete": "Leçon complétée",
+    "next": "Suivant",
+    "back": "Retour"
+  },
+  "vocabulary": {
+    "title": "Vocabulaire",
+    "description": "Développez votre vocabulaire",
+    "word": "Mot",
+    "meaning": "Signification",
+    "example": "Exemple",
+    "learned": "Appris"
+  },
+  "quiz": {
+    "title": "Quiz",
+    "question": "Question",
+    "answer": "Réponse",
+    "submit": "Soumettre",
+    "correct": "Correct!",
+    "incorrect": "Incorrect, essayez à nouveau",
+    "score": "Score",
+    "finish": "Terminer"
+  },
+  "dashboard": {
+    "welcome": "Bienvenue",
+    "lessonsCompleted": "Leçons complétées",
+    "wordsLearned": "Mots appris",
+    "quizzesScore": "Score moyen des quizzes",
+    "streak": "Séquence d'apprentissage",
+    "days": "jours"
+  }
+}
