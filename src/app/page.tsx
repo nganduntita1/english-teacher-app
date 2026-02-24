@@ -2,9 +2,18 @@
 
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function Home() {
   const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.replace('/dashboard');
+    }
+  }, [loading, user, router]);
 
   if (loading) {
     return (
@@ -15,7 +24,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-green-50 via-emerald-50 to-teal-50 pt-8 pb-16 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-gradient-to-b from-green-50 via-emerald-50 to-teal-50 pt-6 md:pt-8 pb-24 md:pb-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
         {/* Hero Section */}
         <div className="text-center mb-16 pt-8 md:pt-16">
@@ -23,15 +32,15 @@ export default function Home() {
             <span className="text-4xl">📚</span>
           </div>
           
-          <h1 className="text-5xl md:text-6xl font-bold text-emerald-900 mb-4">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-emerald-900 mb-4">
             English Teacher
           </h1>
           
-          <p className="text-xl md:text-2xl text-emerald-700 mb-4 font-semibold">
+          <p className="text-lg sm:text-xl md:text-2xl text-emerald-700 mb-4 font-semibold">
             Apprenez l'Anglais, Maîtrisez le Succès
           </p>
           
-          <p className="text-lg text-slate-600 mb-10 max-w-2xl mx-auto font-medium">
+          <p className="text-base sm:text-lg text-slate-600 mb-10 max-w-2xl mx-auto font-medium">
             Votre plateforme moderne pour apprendre l'anglais avec des leçons interactives, du vocabulaire et des quiz
           </p>
 
@@ -46,13 +55,13 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/login"
-                className="inline-block bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-4 px-10 rounded-2xl text-lg shadow-lg hover:shadow-xl transition-all"
+                className="inline-block w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-4 px-10 rounded-2xl text-lg shadow-lg hover:shadow-xl transition-all"
               >
                 Connexion
               </Link>
               <Link
                 href="/signup"
-                className="inline-block bg-white border-2 border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-bold py-4 px-10 rounded-2xl text-lg shadow-lg hover:shadow-xl transition-all"
+                className="inline-block w-full sm:w-auto bg-white border-2 border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-bold py-4 px-10 rounded-2xl text-lg shadow-lg hover:shadow-xl transition-all"
               >
                 Créer un Compte
               </Link>

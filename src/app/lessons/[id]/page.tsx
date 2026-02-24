@@ -97,30 +97,22 @@ export default function LessonDetailPage() {
 
           if (progressError) {
             console.error('Error checking lesson progress:', progressError);
-          } else if (!existingProgress) {
-            // Create new progress entry when user first opens the lesson
-            const { error: insertError } = await supabase.from('user_progress').insert({
-              user_id: user.id,
-              lesson_id: lessonId,
-              completed: false,
-              last_accessed: new Date().toISOString(),
-            });
-
-            if (insertError) {
-              console.error('Error creating lesson progress:', insertError);
-            }
           } else {
-            // Update last accessed time
-            const { error: updateError } = await supabase
+            // Create or update progress in a single call to avoid duplicate insert errors.
+            const { error: upsertError } = await supabase
               .from('user_progress')
-              .update({
-                last_accessed: new Date().toISOString(),
-              })
-              .eq('user_id', user.id)
-              .eq('lesson_id', lessonId);
+              .upsert(
+                {
+                  user_id: user.id,
+                  lesson_id: lessonId,
+                  completed: existingProgress?.completed ?? false,
+                  last_accessed: new Date().toISOString(),
+                },
+                { onConflict: 'user_id,lesson_id' }
+              );
 
-            if (updateError) {
-              console.error('Error updating lesson progress access time:', updateError);
+            if (upsertError) {
+              console.error('Error saving lesson progress:', upsertError);
             }
           }
         }
@@ -265,7 +257,7 @@ export default function LessonDetailPage() {
   if (loading) {
     return (
       <ProtectedRoute>
-        <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white flex items-center justify-center">
+        <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white flex items-center justify-center pb-24 md:pb-12">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-600 mx-auto mb-4"></div>
             <p className="text-slate-600">Chargement de la leçon...</p>
@@ -278,7 +270,7 @@ export default function LessonDetailPage() {
   if (!lesson) {
     return (
       <ProtectedRoute>
-        <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white flex items-center justify-center">
+        <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white flex items-center justify-center pb-24 md:pb-12">
           <div className="text-center">
             <p className="text-slate-600 text-lg">Leçon non trouvée</p>
             <button
@@ -308,7 +300,7 @@ export default function LessonDetailPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white">
+      <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white pb-24 md:pb-12">
         {/* Header */}
         <div className="bg-gradient-to-r from-emerald-900 to-emerald-800 text-white py-8 px-4">
           <div className="max-w-4xl mx-auto">
@@ -369,7 +361,7 @@ export default function LessonDetailPage() {
         </div>
 
         {/* Content */}
-        <div className="max-w-4xl mx-auto px-4 py-12">
+        <div className="max-w-4xl mx-auto px-4 py-10 md:py-12">
           {/* Content Tab */}
           {activeTab === 'content' && (
             <div className="space-y-6 animate-fade-in">
@@ -396,7 +388,7 @@ export default function LessonDetailPage() {
                           <button
                             onClick={() => handleSpeak(word.word, word.id)}
                             disabled={speakingWord === word.id}
-                            className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                            className="p-2 min-h-[44px] min-w-[44px] rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
                             title="Pronounce word"
                           >
                             <Volume2 className={`h-4 w-4 ${speakingWord === word.id ? 'animate-pulse' : ''}`} />
@@ -407,7 +399,7 @@ export default function LessonDetailPage() {
                   </div>
                   <button
                     onClick={() => setActiveTab('vocabulary')}
-                    className="mt-4 w-full px-6 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition font-semibold"
+                    className="mt-4 w-full px-6 py-3 min-h-[44px] bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition font-semibold"
                   >
                     Voir tout le vocabulaire →
                   </button>

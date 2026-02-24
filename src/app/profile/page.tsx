@@ -154,7 +154,7 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <ProtectedRoute>
-        <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white flex items-center justify-center">
+        <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white flex items-center justify-center pb-24 md:pb-12">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-600 mx-auto mb-4"></div>
             <p className="text-slate-600">Chargement du profil...</p>
@@ -166,7 +166,7 @@ export default function ProfilePage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white">
+      <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white pb-24 md:pb-12">
         {/* Header */}
         <div className="bg-gradient-to-r from-emerald-900 to-emerald-800 text-white py-8 px-4">
           <div className="max-w-4xl mx-auto">
@@ -221,7 +221,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Content */}
-        <div className="max-w-4xl mx-auto px-4 py-12">
+        <div className="max-w-4xl mx-auto px-4 py-10 md:py-12">
           {/* Overview Tab */}
           {activeTab === 'overview' && (
             <div className="space-y-6 animate-fade-in">

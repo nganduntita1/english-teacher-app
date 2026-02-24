@@ -40,9 +40,6 @@ export default function Navbar() {
                 <Link href="/vocabulary" className="hover:text-emerald-200 font-semibold transition">
                   Vocabulaire
                 </Link>
-                <Link href="/admin" className="hover:text-purple-200 font-semibold transition text-purple-300">
-                  ⚡ Générateur IA
-                </Link>
                 <Link href="/profile" className="hover:text-emerald-200 font-semibold transition">
                   Profil
                 </Link>
@@ -106,13 +103,6 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                 >
                   Quizzes
-                </Link>
-                <Link
-                  href="/admin"
-                  className="block px-4 py-3 hover:bg-purple-800 rounded-xl font-semibold transition text-purple-300"
-                  onClick={() => setIsOpen(false)}
-                >
-                  ⚡ Panneau Admin
                 </Link>
                 <Link
                   href="/profile"

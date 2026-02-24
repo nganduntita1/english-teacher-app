@@ -184,7 +184,7 @@ export default function VocabularyPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gradient-to-b from-green-50 via-emerald-50 to-teal-50 pt-8 pb-16 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gradient-to-b from-green-50 via-emerald-50 to-teal-50 pt-6 md:pt-8 pb-24 md:pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="mb-12">
@@ -231,7 +231,7 @@ export default function VocabularyPage() {
                       setFilter(f as any);
                       if (f === 'daily') setShowReview(false);
                     }}
-                    className={`px-6 py-2 rounded-full font-bold transition-all ${
+                    className={`px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-bold transition-all ${
                       filter === f
                         ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -242,10 +242,10 @@ export default function VocabularyPage() {
                 ))}
               </div>
               {filter === 'daily' && (
-                <div className="flex gap-2 text-sm">
+                <div className="flex gap-2 text-xs sm:text-sm">
                   <button
                     onClick={() => setShowReview(false)}
-                    className={`px-4 py-2 rounded-lg font-semibold transition-all ${!
+                    className={`px-3 sm:px-4 py-2 rounded-lg font-semibold transition-all ${!
                       showReview
                       ? 'bg-emerald-500 text-white'
                       : 'bg-slate-100 text-slate-700'
@@ -255,7 +255,7 @@ export default function VocabularyPage() {
                   </button>
                   <button
                     onClick={() => setShowReview(true)}
-                    className={`px-4 py-2 rounded-lg font-semibold transition-all ${showReview
+                    className={`px-3 sm:px-4 py-2 rounded-lg font-semibold transition-all ${showReview
                       ? 'bg-emerald-500 text-white'
                       : 'bg-slate-100 text-slate-700'
                     }`}
@@ -333,14 +333,14 @@ export default function VocabularyPage() {
                     <button
                       onClick={() => handleSpeak(word.word, word.id)}
                       disabled={speakingWord === word.id}
-                      className="p-3 rounded-xl bg-blue-500 text-white hover:bg-blue-600 transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                      className="p-3 min-h-[44px] min-w-[44px] rounded-xl bg-blue-500 text-white hover:bg-blue-600 transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
                       title="Pronounce word"
                     >
                       <Volume2 className={`h-5 w-5 ${speakingWord === word.id ? 'animate-pulse' : ''}`} />
                     </button>
                     <button
                       onClick={() => toggleLearned(word.id)}
-                      className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all transform hover:scale-105 ${
+                      className={`flex-1 py-3 px-4 min-h-[44px] rounded-xl font-bold transition-all transform hover:scale-105 ${
                         learnedIds.has(word.id)
                           ? 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg'
                           : 'bg-slate-100 hover:bg-emerald-100 text-slate-700 hover:text-emerald-700 border-2 border-slate-200 hover:border-emerald-300'

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
 import Navbar from '@/components/Navbar';
+import MobileBottomNav from '@/components/MobileBottomNav';
 
 export const metadata: Metadata = {
   title: 'English Teacher - Apprendre l\'Anglais',
@@ -19,6 +20,7 @@ export default function RootLayout({
         <AuthProvider>
           <Navbar />
           {children}
+          <MobileBottomNav />
           <footer className="bg-gradient-to-r from-slate-900 to-slate-800 text-white py-8 mt-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
               <p className="text-lg font-medium mb-2">

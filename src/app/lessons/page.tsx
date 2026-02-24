@@ -52,7 +52,7 @@ export default function LessonsPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gradient-to-b from-green-50 via-emerald-50 to-teal-50 pt-8 pb-16 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gradient-to-b from-green-50 via-emerald-50 to-teal-50 pt-6 md:pt-8 pb-24 md:pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="mb-12">
@@ -122,7 +122,7 @@ export default function LessonsPage() {
                     {/* Button */}
                     <Link
                       href={`/lessons/${lesson.id}`}
-                      className="group/btn bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 flex items-center gap-2 whitespace-nowrap"
+                      className="group/btn w-full md:w-auto justify-center bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:scale-105 flex items-center gap-2 whitespace-nowrap"
                     >
                       Commencer la Leçon
                       <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />

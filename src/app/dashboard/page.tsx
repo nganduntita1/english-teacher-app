@@ -59,7 +59,7 @@ export default function DashboardPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gradient-to-b from-green-50 via-emerald-50 to-teal-50 pt-6 md:pt-8 pb-16 px-3 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gradient-to-b from-green-50 via-emerald-50 to-teal-50 pt-6 md:pt-8 pb-24 md:pb-16 px-3 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8 md:mb-12">

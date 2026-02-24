@@ -64,7 +64,7 @@ export default function AdminPanel() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gradient-to-b from-purple-50 via-indigo-50 to-blue-50 pt-8 pb-16 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gradient-to-b from-purple-50 via-indigo-50 to-blue-50 pt-6 md:pt-8 pb-24 md:pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="mb-12">

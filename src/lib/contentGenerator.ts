@@ -21,6 +21,52 @@ interface GeneratedQuizQuestion {
   explanation: string;
 }
 
+const frenchStopwords = new Set([
+  'le', 'la', 'les', 'un', 'une', 'des', 'de', 'du', 'au', 'aux', 'pour', 'avec',
+  'sans', 'et', 'ou', 'est', 'sont', 'dans', 'sur', 'par', 'que', 'qui', 'ce',
+  'cette', 'ces', 'vous', 'nous', 'votre', 'notre', 'apprenez', 'apprendre',
+  'maitriser', 'maitrisez', 'anglais', 'niveau', 'lecon', 'lecons', 'vocabulaire',
+]);
+
+const englishStopwords = new Set([
+  'the', 'and', 'with', 'in', 'we', 'you', 'your', 'our', 'this', 'that', 'is',
+  'are', 'to', 'of', 'for', 'on', 'from', 'learn', 'learning', 'lesson', 'lessons',
+  'english', 'level', 'vocabulary',
+]);
+
+const looksLikeFrench = (text: string) => {
+  const lower = text.toLowerCase();
+  const tokens = lower.match(/[a-zàâçéèêëîïôûùüÿœ]+/g) || [];
+  let frenchHits = 0;
+  let englishHits = 0;
+
+  for (const token of tokens) {
+    if (frenchStopwords.has(token)) frenchHits++;
+    if (englishStopwords.has(token)) englishHits++;
+  }
+
+  const hasAccents = /[àâçéèêëîïôûùüÿœ]/i.test(text);
+  if (hasAccents) frenchHits += 2;
+
+  if (frenchHits >= 2) return true;
+  if (englishHits >= 2) return false;
+  return frenchHits > englishHits;
+};
+
+const translateTitleDescriptionToFrench = async (title: string, description: string) => {
+  const prompt = `
+You are a translator. Convert the following JSON fields to French.
+Return ONLY valid JSON with fields: title, description.
+
+Input:
+{"title": "${title.replace(/"/g, '\\"')}", "description": "${description.replace(/"/g, '\\"')}"}
+`;
+
+  const response = await generateWithGroq(prompt);
+  const translated = JSON.parse(response) as { title: string; description: string };
+  return translated;
+};
+
 export async function generateLesson(
   level: 'beginner' | 'intermediate' | 'advanced',
   topic?: string
@@ -51,6 +97,14 @@ Generate the lesson now:`;
   try {
     const response = await generateWithGroq(prompt);
     const lesson = JSON.parse(response) as GeneratedLesson;
+
+    if (!looksLikeFrench(lesson.title) || !looksLikeFrench(lesson.description)) {
+      const translated = await translateTitleDescriptionToFrench(lesson.title, lesson.description);
+      lesson.title = translated.title;
+      lesson.description = translated.description;
+    }
+
+    lesson.level = level;
     return lesson;
   } catch (error) {
     console.error('Error generating lesson:', error);
