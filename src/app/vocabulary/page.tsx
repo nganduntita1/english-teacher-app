@@ -2,6 +2,7 @@
 
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { supabase } from '@/lib/supabase';
+import { ensureUserProfile } from '@/lib/userProfile';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { speak, isSpeechSupported } from '@/lib/speech';
@@ -38,6 +39,8 @@ export default function VocabularyPage() {
         setVocabulary(data || []);
 
         if (user) {
+          await ensureUserProfile(user);
+
           const { data: learnedData } = await supabase
             .from('learned_vocabulary')
             .select('vocabulary_id')
@@ -77,9 +80,13 @@ export default function VocabularyPage() {
                   is_review: false,
                 }));
 
-                await supabase
+                const { error: insertError } = await supabase
                   .from('vocabulary_daily_tracking')
                   .insert(trackingEntries);
+
+                if (insertError) {
+                  console.error('Error creating daily vocabulary tracking:', insertError);
+                }
 
                 setDailyWords(
                   new Set(wordsToShow.map((w) => w.id))
@@ -118,6 +125,8 @@ export default function VocabularyPage() {
     if (!user) return;
 
     try {
+      await ensureUserProfile(user);
+
       if (learnedIds.has(vocabId)) {
         const { error } = await supabase
           .from('learned_vocabulary')

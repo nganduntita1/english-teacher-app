@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
-import { normalizeUsername } from '@/lib/usernameAuth';
+import { ensureUserProfile } from '@/lib/userProfile';
 
 interface AuthContextType {
   session: Session | null;
@@ -40,25 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Ensure a profile row exists for the authenticated user
   useEffect(() => {
-    const syncProfile = async () => {
-      if (!user) return;
-
-      const emailPrefix = user.email?.split('@')[0] ?? null;
-      const fallbackUsername = emailPrefix ? normalizeUsername(emailPrefix) : null;
-
-      const { error } = await supabase.from('users').upsert({
-        id: user.id,
-        email: user.email ?? '',
-        full_name: (user as any)?.user_metadata?.full_name ?? null,
-        username: (user as any)?.user_metadata?.username ?? fallbackUsername,
-      });
-
-      if (error) {
-        console.error('Error syncing user profile:', error);
-      }
-    };
-
-    syncProfile();
+    ensureUserProfile(user);
   }, [user]);
 
   return (

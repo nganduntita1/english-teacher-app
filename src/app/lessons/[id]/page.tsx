@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { ensureUserProfile } from '@/lib/userProfile';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
 import { speak, isSpeechSupported } from '@/lib/speech';
@@ -85,30 +86,42 @@ export default function LessonDetailPage() {
 
         // Track lesson access - create or update user_progress
         if (user) {
-          const { data: existingProgress } = await supabase
+          await ensureUserProfile(user);
+
+          const { data: existingProgress, error: progressError } = await supabase
             .from('user_progress')
             .select('*')
             .eq('user_id', user.id)
             .eq('lesson_id', lessonId)
-            .single();
+            .maybeSingle();
 
-          if (!existingProgress) {
+          if (progressError) {
+            console.error('Error checking lesson progress:', progressError);
+          } else if (!existingProgress) {
             // Create new progress entry when user first opens the lesson
-            await supabase.from('user_progress').insert({
+            const { error: insertError } = await supabase.from('user_progress').insert({
               user_id: user.id,
               lesson_id: lessonId,
               completed: false,
               last_accessed: new Date().toISOString(),
             });
+
+            if (insertError) {
+              console.error('Error creating lesson progress:', insertError);
+            }
           } else {
             // Update last accessed time
-            await supabase
+            const { error: updateError } = await supabase
               .from('user_progress')
               .update({
                 last_accessed: new Date().toISOString(),
               })
               .eq('user_id', user.id)
               .eq('lesson_id', lessonId);
+
+            if (updateError) {
+              console.error('Error updating lesson progress access time:', updateError);
+            }
           }
         }
       } catch (error) {
@@ -161,11 +174,13 @@ export default function LessonDetailPage() {
     setQuizSubmitted(true);
 
     try {
+      await ensureUserProfile(user);
+
       // Save quiz attempt to database
       const totalQuestions = quizQuestions.length;
       const percentage = Math.round((correctCount / totalQuestions) * 100);
 
-      await supabase.from('quiz_attempts').insert({
+      const { error: quizAttemptError } = await supabase.from('quiz_attempts').insert({
         user_id: user.id,
         lesson_id: lessonId,
         score: correctCount,
@@ -173,17 +188,26 @@ export default function LessonDetailPage() {
         percentage: percentage,
       });
 
+      if (quizAttemptError) {
+        console.error('Error saving quiz attempt:', quizAttemptError);
+      }
+
       // Update lesson progress
-      const { data: existingProgress } = await supabase
+      const { data: existingProgress, error: progressError } = await supabase
         .from('user_progress')
         .select('*')
         .eq('user_id', user.id)
         .eq('lesson_id', lessonId)
-        .single();
+        .maybeSingle();
+
+      if (progressError) {
+        console.error('Error checking lesson progress:', progressError);
+        return;
+      }
 
       if (existingProgress) {
         // Update existing progress
-        await supabase
+        const { error: updateError } = await supabase
           .from('user_progress')
           .update({
             completed: percentage >= 70, // Mark as completed if score is 70% or higher
@@ -191,14 +215,22 @@ export default function LessonDetailPage() {
           })
           .eq('user_id', user.id)
           .eq('lesson_id', lessonId);
+
+        if (updateError) {
+          console.error('Error updating quiz progress:', updateError);
+        }
       } else {
         // Create new progress entry
-        await supabase.from('user_progress').insert({
+        const { error: insertError } = await supabase.from('user_progress').insert({
           user_id: user.id,
           lesson_id: lessonId,
           completed: percentage >= 70,
           last_accessed: new Date().toISOString(),
         });
+
+        if (insertError) {
+          console.error('Error creating quiz progress:', insertError);
+        }
       }
     } catch (error) {
       console.error('Error saving quiz progress:', error);
