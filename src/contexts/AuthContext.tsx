@@ -43,7 +43,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const syncProfile = async () => {
       if (!user) return;
 
-      const fallbackUsername = user.email ? normalizeUsername(user.email.split('@')[0]) : null;
+      const emailPrefix = user.email?.split('@')[0] ?? null;
+      const fallbackUsername = emailPrefix ? normalizeUsername(emailPrefix) : null;
 
       const { error } = await supabase.from('users').upsert({
         id: user.id,
