@@ -444,55 +444,57 @@ export default function LessonDetailPage() {
                   <p className="text-slate-600">Aucun vocabulaire disponible pour cette leçon.</p>
                 </div>
               ) : (
-                <div className="grid gap-4">
-                  {vocabulary.map((word, index) => (
-                    <div key={word.id} className="bg-white rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-md transition border-l-4 border-emerald-500">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-3 mb-2">
-                          <span className="w-7 h-7 md:w-8 md:h-8 bg-emerald-600 text-white rounded-lg flex items-center justify-center text-xs md:text-sm font-bold flex-shrink-0">
-                            {index + 1}
-                          </span>
-                            <h3 className="text-base md:text-xl font-bold text-emerald-700">{word.word}</h3>
+                <>
+                  <div className="grid gap-4">
+                    {vocabulary.map((word, index) => (
+                      <div key={word.id} className="bg-white rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-md transition border-l-4 border-emerald-500">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-3 mb-2">
+                            <span className="w-7 h-7 md:w-8 md:h-8 bg-emerald-600 text-white rounded-lg flex items-center justify-center text-xs md:text-sm font-bold flex-shrink-0">
+                              {index + 1}
+                            </span>
+                              <h3 className="text-base md:text-xl font-bold text-emerald-700">{word.word}</h3>
+                            </div>
+                            <p className="text-xs md:text-sm text-slate-600 mb-3">{word.french_meaning}</p>
+                            <div className="bg-slate-50 rounded-lg p-3 md:p-4 space-y-2">
+                              <p className="text-xs md:text-sm text-slate-700">
+                                <span className="font-semibold">English:</span> {word.example_en}
+                              </p>
+                              <p className="text-xs md:text-sm text-slate-700">
+                                <span className="font-semibold">Français:</span> {word.example_fr}
+                              </p>
+                            </div>
                           </div>
-                          <p className="text-xs md:text-sm text-slate-600 mb-3">{word.french_meaning}</p>
-                          <div className="bg-slate-50 rounded-lg p-3 md:p-4 space-y-2">
-                            <p className="text-xs md:text-sm text-slate-700">
-                              <span className="font-semibold">English:</span> {word.example_en}
-                            </p>
-                            <p className="text-xs md:text-sm text-slate-700">
-                              <span className="font-semibold">Français:</span> {word.example_fr}
-                            </p>
-                          </div>
+                          <button
+                            onClick={() => handleSpeak(word.word, word.id)}
+                            disabled={speakingWord === word.id}
+                            className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                            title="Pronounce word"
+                          >
+                            <Volume2 className={`h-4 w-4 ${speakingWord === word.id ? 'animate-pulse' : ''}`} />
+                          </button>
                         </div>
-                        <button
-                          onClick={() => handleSpeak(word.word, word.id)}
-                          disabled={speakingWord === word.id}
-                          className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
-                          title="Pronounce word"
-                        >
-                          <Volume2 className={`h-4 w-4 ${speakingWord === word.id ? 'animate-pulse' : ''}`} />
-                        </button>
                       </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="flex gap-3 mt-6 flex-col-reverse sm:flex-row">
-                  <button
-                    onClick={goToPrevTab}
-                    disabled={!canGoPrev}
-                    className="flex-1 px-6 py-3 border-2 border-slate-300 text-slate-700 rounded-xl hover:border-slate-400 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    ← Previous
-                  </button>
-                  <button
-                    onClick={goToNextTab}
-                    disabled={!canGoNext}
-                    className="flex-1 px-6 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Suivant: Quiz →
-                  </button>
-                </div>
+                    ))}
+                  </div>
+                  <div className="flex gap-3 mt-6 flex-col-reverse sm:flex-row">
+                    <button
+                      onClick={goToPrevTab}
+                      disabled={!canGoPrev}
+                      className="flex-1 px-6 py-3 border-2 border-slate-300 text-slate-700 rounded-xl hover:border-slate-400 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      ← Previous
+                    </button>
+                    <button
+                      onClick={goToNextTab}
+                      disabled={!canGoNext}
+                      className="flex-1 px-6 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Suivant: Quiz →
+                    </button>
+                  </div>
+                </>
               )}
             </div>
           )}
