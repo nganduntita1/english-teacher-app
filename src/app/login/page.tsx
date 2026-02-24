@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { isValidUsername, normalizeUsername, toInternalEmail } from '@/lib/usernameAuth';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,8 +19,15 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+      const normalizedUsername = normalizeUsername(username);
+      if (!isValidUsername(normalizedUsername)) {
+        setError("Le nom d'utilisateur doit contenir 3-20 caracteres (lettres, chiffres, underscore).");
+        setLoading(false);
+        return;
+      }
+
       const { error } = await supabase.auth.signInWithPassword({
-        email,
+        email: toInternalEmail(normalizedUsername),
         password,
       });
 
@@ -58,14 +66,14 @@ export default function LoginPage() {
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
               <label className="block text-slate-700 font-semibold mb-3">
-                Adresse Email
+                Nom d'utilisateur
               </label>
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="w-full px-5 py-3 border-2 border-slate-200 rounded-2xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all"
-                placeholder="your@email.com"
+                placeholder="votre_nom"
                 required
               />
             </div>

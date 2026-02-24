@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { isValidUsername, normalizeUsername, toInternalEmail } from '@/lib/usernameAuth';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function SignupPage() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -25,15 +26,23 @@ export default function SignupPage() {
       return;
     }
 
+    const normalizedUsername = normalizeUsername(username);
+    if (!isValidUsername(normalizedUsername)) {
+      setError("Le nom d'utilisateur doit contenir 3-20 caracteres (lettres, chiffres, underscore).");
+      return;
+    }
+
     setLoading(true);
 
     try {
+      const internalEmail = toInternalEmail(normalizedUsername);
       const { error: authError, data } = await supabase.auth.signUp({
-        email,
+        email: internalEmail,
         password,
         options: {
           data: {
             full_name: fullName,
+            username: normalizedUsername,
           },
         },
       });
@@ -46,14 +55,13 @@ export default function SignupPage() {
           await supabase.from('users').insert([
             {
               id: data.user.id,
-              email,
+              email: internalEmail,
               full_name: fullName,
+              username: normalizedUsername,
             },
           ]);
         }
-        setSuccess(
-          'Account created successfully! Please check your email to confirm.'
-        );
+        setSuccess('Account created successfully! You can now sign in.');
         setTimeout(() => router.push('/login'), 2000);
       }
     } catch (err) {
@@ -106,16 +114,19 @@ export default function SignupPage() {
 
             <div>
               <label className="block text-slate-700 font-semibold mb-3">
-                Adresse Email
+                Nom d'utilisateur
               </label>
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="w-full px-5 py-3 border-2 border-slate-200 rounded-2xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all"
-                placeholder="your@email.com"
+                placeholder="votre_nom"
                 required
               />
+              <p className="text-xs text-slate-500 mt-2">
+                3-20 caractères, lettres, chiffres, underscore.
+              </p>
             </div>
 
             <div>

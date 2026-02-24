@@ -10,6 +10,7 @@ import { User, Lock, LogOut, Trash2, CheckCircle, AlertCircle } from 'lucide-rea
 interface UserProfile {
   email: string;
   full_name: string;
+  username: string;
   created_at: string;
 }
 
@@ -175,7 +176,7 @@ export default function ProfilePage() {
               </div>
               <div>
                 <h1 className="text-3xl font-bold">{profile?.full_name || 'User'}</h1>
-                <p className="text-emerald-100">{user?.email}</p>
+                <p className="text-emerald-100">@{profile?.username || 'utilisateur'}</p>
               </div>
             </div>
           </div>
@@ -236,8 +237,10 @@ export default function ProfilePage() {
                     <p className="text-lg font-semibold text-slate-800">{profile?.full_name || 'Non défini'}</p>
                   </div>
                   <div className="pb-4 border-b border-slate-200">
-                    <p className="text-sm text-slate-600 mb-1">Adresse Email</p>
-                    <p className="text-lg font-semibold text-slate-800">{user?.email}</p>
+                    <p className="text-sm text-slate-600 mb-1">Nom d'utilisateur</p>
+                    <p className="text-lg font-semibold text-slate-800">
+                      {profile?.username || 'Non défini'}
+                    </p>
                   </div>
                   <div className="pb-4">
                     <p className="text-sm text-slate-600 mb-1">Membre Depuis</p>

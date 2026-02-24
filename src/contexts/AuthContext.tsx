@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
+import { normalizeUsername } from '@/lib/usernameAuth';
 
 interface AuthContextType {
   session: Session | null;
@@ -42,10 +43,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const syncProfile = async () => {
       if (!user) return;
 
+      const fallbackUsername = user.email ? normalizeUsername(user.email.split('@')[0]) : null;
+
       const { error } = await supabase.from('users').upsert({
         id: user.id,
         email: user.email ?? '',
         full_name: (user as any)?.user_metadata?.full_name ?? null,
+        username: (user as any)?.user_metadata?.username ?? fallbackUsername,
       });
 
       if (error) {
