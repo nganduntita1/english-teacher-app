@@ -67,6 +67,33 @@ Input:
   return translated;
 };
 
+const generateFrenchMetaFromContent = async (
+  content: string,
+  level: 'beginner' | 'intermediate' | 'advanced',
+  topic?: string
+) => {
+  const prompt = `
+You are a French teacher. Create a short French title and description for this English lesson.
+
+Requirements:
+- Output ONLY valid JSON with fields: title, description
+- title: max 60 characters
+- description: max 160 characters
+- French only
+- Level: ${level}
+- Topic: ${topic || 'random useful English topic'}
+
+Lesson content:
+"""
+${content}
+"""
+`;
+
+  const response = await generateWithGroq(prompt);
+  const meta = JSON.parse(response) as { title: string; description: string };
+  return meta;
+};
+
 export async function generateLesson(
   level: 'beginner' | 'intermediate' | 'advanced',
   topic?: string
@@ -98,10 +125,36 @@ Generate the lesson now:`;
     const response = await generateWithGroq(prompt);
     const lesson = JSON.parse(response) as GeneratedLesson;
 
-    if (!looksLikeFrench(lesson.title) || !looksLikeFrench(lesson.description)) {
-      const translated = await translateTitleDescriptionToFrench(lesson.title, lesson.description);
-      lesson.title = translated.title;
-      lesson.description = translated.description;
+    const descriptionLooksEnglish = /\bin english\b/i.test(lesson.description ?? '');
+    const needsTitle = !looksLikeFrench(lesson.title ?? '');
+    const needsDescription =
+      !looksLikeFrench(lesson.description ?? '') ||
+      descriptionLooksEnglish ||
+      (lesson.description ?? '').length > 220;
+
+    if (needsTitle || needsDescription) {
+      try {
+        const translated = await translateTitleDescriptionToFrench(lesson.title, lesson.description);
+        if (needsTitle) lesson.title = translated.title;
+        if (needsDescription) lesson.description = translated.description;
+      } catch (error) {
+        console.error('Error translating lesson meta:', error);
+      }
+    }
+
+    const needsMetaRegeneration =
+      !looksLikeFrench(lesson.title ?? '') ||
+      !looksLikeFrench(lesson.description ?? '') ||
+      (lesson.description ?? '').length > 220;
+
+    if (needsMetaRegeneration) {
+      try {
+        const meta = await generateFrenchMetaFromContent(lesson.content, level, topic);
+        if (needsTitle) lesson.title = meta.title;
+        if (needsDescription) lesson.description = meta.description;
+      } catch (error) {
+        console.error('Error regenerating lesson meta:', error);
+      }
     }
 
     lesson.level = level;

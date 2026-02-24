@@ -28,7 +28,7 @@ interface Vocabulary {
 interface QuizQuestion {
   id: string;
   question: string;
-  options: string[];
+  options: string[] | string;
   correct_answer: string;
   explanation: string;
 }
@@ -82,7 +82,33 @@ export default function LessonDetailPage() {
           .eq('lesson_id', lessonId);
 
         if (quizError) throw quizError;
-        setQuizQuestions(quizData || []);
+        const normalizedQuiz = (quizData || []).map((question) => {
+          let options: string[] = [];
+
+          if (Array.isArray(question.options)) {
+            options = question.options;
+          } else if (typeof question.options === 'string') {
+            try {
+              const parsed = JSON.parse(question.options);
+              if (Array.isArray(parsed)) {
+                options = parsed;
+              }
+            } catch (error) {
+              console.error('Error parsing quiz options:', error);
+            }
+          }
+
+          if (options.length === 0) {
+            options = [question.correct_answer].filter(Boolean);
+          }
+
+          return {
+            ...question,
+            options,
+          };
+        });
+
+        setQuizQuestions(normalizedQuiz);
 
         // Track lesson access - create or update user_progress
         if (user) {
