@@ -9,22 +9,14 @@ import Link from 'next/link';
 export default function SignupPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [fullName, setFullName] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setSuccess('');
-
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
+    
 
     const normalizedUsername = normalizeUsername(username);
     if (!isValidUsername(normalizedUsername)) {
@@ -41,7 +33,6 @@ export default function SignupPage() {
         password,
         options: {
           data: {
-            full_name: fullName,
             username: normalizedUsername,
           },
         },
@@ -56,13 +47,25 @@ export default function SignupPage() {
             {
               id: data.user.id,
               email: internalEmail,
-              full_name: fullName,
               username: normalizedUsername,
             },
           ]);
         }
-        setSuccess('Account created successfully! You can now sign in.');
-        setTimeout(() => router.push('/login'), 2000);
+        if (data.session) {
+          router.push('/dashboard');
+          return;
+        }
+
+        const { error: loginError } = await supabase.auth.signInWithPassword({
+          email: internalEmail,
+          password,
+        });
+
+        if (loginError) {
+          setError(loginError.message);
+        } else {
+          router.push('/dashboard');
+        }
       }
     } catch (err) {
       setError('An error occurred');
@@ -91,27 +94,7 @@ export default function SignupPage() {
             </div>
           )}
 
-          {success && (
-            <div className="bg-green-50 border-2 border-green-300 text-green-700 px-5 py-4 rounded-2xl mb-6 font-medium">
-              {success}
-            </div>
-          )}
-
           <form onSubmit={handleSignup} className="space-y-5">
-            <div>
-              <label className="block text-slate-700 font-semibold mb-3">
-                Nom Complet
-              </label>
-              <input
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="w-full px-5 py-3 border-2 border-slate-200 rounded-2xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all"
-                placeholder="Votre nom"
-                required
-              />
-            </div>
-
             <div>
               <label className="block text-slate-700 font-semibold mb-3">
                 Nom d'utilisateur
@@ -137,20 +120,6 @@ export default function SignupPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-5 py-3 border-2 border-slate-200 rounded-2xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all"
-                placeholder="••••••••"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-slate-700 font-semibold mb-3">
-                Confirmer le Mot de Passe
-              </label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full px-5 py-3 border-2 border-slate-200 rounded-2xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all"
                 placeholder="••••••••"
                 required
