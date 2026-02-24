@@ -243,13 +243,32 @@ export default function LessonDetailPage() {
     setScore(0);
   };
 
+  const goToNextTab = () => {
+    if (activeTab === 'content') setActiveTab('vocabulary');
+    else if (activeTab === 'vocabulary') setActiveTab('quiz');
+  };
+
+  const goToPrevTab = () => {
+    if (activeTab === 'vocabulary') setActiveTab('content');
+    else if (activeTab === 'quiz') setActiveTab('vocabulary');
+  };
+
+  const handleFinishLesson = () => {
+    router.push('/lessons');
+  };
+
+  const tabOrder = ['content', 'vocabulary', 'quiz'] as const;
+  const currentTabIndex = tabOrder.indexOf(activeTab as any);
+  const canGoNext = currentTabIndex < tabOrder.length - 1;
+  const canGoPrev = currentTabIndex > 0;
+
   if (loading) {
     return (
       <ProtectedRoute>
         <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-600 mx-auto mb-4"></div>
-            <p className="text-slate-600">Loading lesson...</p>
+            <p className="text-slate-600">Chargement de la leçon...</p>
           </div>
         </div>
       </ProtectedRoute>
@@ -261,12 +280,12 @@ export default function LessonDetailPage() {
       <ProtectedRoute>
         <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white flex items-center justify-center">
           <div className="text-center">
-            <p className="text-slate-600 text-lg">Lesson not found</p>
+            <p className="text-slate-600 text-lg">Leçon non trouvée</p>
             <button
               onClick={() => router.push('/lessons')}
               className="mt-4 px-6 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition"
             >
-              Back to Lessons
+              Retour aux Leçons
             </button>
           </div>
         </div>
@@ -298,7 +317,7 @@ export default function LessonDetailPage() {
               className="flex items-center gap-2 hover:text-emerald-200 transition mb-4"
             >
               <ArrowLeft size={20} />
-              Back to Lessons
+              Retour aux Leçons
             </button>
             <div className="flex items-center gap-3 mb-2">
               <BookOpen size={32} />
@@ -314,30 +333,30 @@ export default function LessonDetailPage() {
         {/* Tab Navigation */}
         <div className="border-b border-emerald-200 bg-white sticky top-0 z-10">
           <div className="max-w-4xl mx-auto px-4">
-            <div className="flex gap-8">
+            <div className="flex gap-2 md:gap-8 overflow-x-auto">
               <button
                 onClick={() => setActiveTab('content')}
-                className={`py-4 px-2 font-semibold border-b-2 transition ${
+                className={`py-4 px-3 md:px-2 font-semibold border-b-2 transition whitespace-nowrap text-sm md:text-base ${
                   activeTab === 'content'
                     ? 'border-emerald-600 text-emerald-600'
                     : 'border-transparent text-slate-600 hover:text-emerald-600'
                 }`}
               >
-                Content
+                Contenu
               </button>
               <button
                 onClick={() => setActiveTab('vocabulary')}
-                className={`py-4 px-2 font-semibold border-b-2 transition ${
+                className={`py-4 px-3 md:px-2 font-semibold border-b-2 transition whitespace-nowrap text-sm md:text-base ${
                   activeTab === 'vocabulary'
                     ? 'border-emerald-600 text-emerald-600'
                     : 'border-transparent text-slate-600 hover:text-emerald-600'
                 }`}
               >
-                Vocabulary ({vocabulary.length})
+                Vocabulaire ({vocabulary.length})
               </button>
               <button
                 onClick={() => setActiveTab('quiz')}
-                className={`py-4 px-2 font-semibold border-b-2 transition ${
+                className={`py-4 px-3 md:px-2 font-semibold border-b-2 transition whitespace-nowrap text-sm md:text-base ${
                   activeTab === 'quiz'
                     ? 'border-emerald-600 text-emerald-600'
                     : 'border-transparent text-slate-600 hover:text-emerald-600'
@@ -355,7 +374,7 @@ export default function LessonDetailPage() {
           {activeTab === 'content' && (
             <div className="space-y-6 animate-fade-in">
               <div className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition">
-                <h2 className="text-2xl font-bold text-slate-800 mb-4">Lesson Content</h2>
+                <h2 className="text-2xl font-bold text-slate-800 mb-4">Contenu de la Leçon</h2>
                 <div className="prose prose-sm max-w-none">
                   <p className="text-slate-700 leading-relaxed whitespace-pre-wrap text-base">
                     {lesson.content}
@@ -363,16 +382,16 @@ export default function LessonDetailPage() {
                 </div>
               </div>
               {vocabulary.length > 0 && (
-                <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-8 border border-emerald-200">
-                  <h3 className="text-xl font-bold text-emerald-900 mb-4">Preview: Key Vocabulary</h3>
+                <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-6 md:p-8 border border-emerald-200">
+                  <h3 className="text-lg md:text-xl font-bold text-emerald-900 mb-4">Aperçu: Vocabulaire clé</h3>
                   <div className="grid gap-4">
                     {vocabulary.slice(0, 3).map((word) => (
                       <div key={word.id} className="bg-white rounded-xl p-4">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <p className="text-lg font-semibold text-emerald-700">{word.word}</p>
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-base md:text-lg font-semibold text-emerald-700">{word.word}</p>
                             <p className="text-sm text-slate-600 mt-1">{word.french_meaning}</p>
-                            <p className="text-sm text-slate-700 mt-2 italic">"{word.example_en}"</p>
+                            <p className="text-xs md:text-sm text-slate-700 mt-2 italic">"{word.example_en}"</p>
                           </div>
                           <button
                             onClick={() => handleSpeak(word.word, word.id)}
@@ -388,9 +407,28 @@ export default function LessonDetailPage() {
                   </div>
                   <button
                     onClick={() => setActiveTab('vocabulary')}
-                    className="mt-4 px-6 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition"
+                    className="mt-4 w-full px-6 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition font-semibold"
                   >
-                    View All Vocabulary
+                    Voir tout le vocabulaire →
+                  </button>
+                </div>
+              )}
+
+              {vocabulary.length > 0 && (
+                <div className="flex gap-3 mt-6 flex-col-reverse sm:flex-row">
+                  <button
+                    onClick={goToPrevTab}
+                    disabled={!canGoPrev}
+                    className="flex-1 px-6 py-3 border-2 border-slate-300 text-slate-700 rounded-xl hover:border-slate-400 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    ← Précédent
+                  </button>
+                  <button
+                    onClick={goToNextTab}
+                    disabled={!canGoNext}
+                    className="flex-1 px-6 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Suivant →
                   </button>
                 </div>
               )}
@@ -400,37 +438,60 @@ export default function LessonDetailPage() {
           {/* Vocabulary Tab */}
           {activeTab === 'vocabulary' && (
             <div className="space-y-4 animate-fade-in">
-              <h2 className="text-2xl font-bold text-slate-800 mb-6">Vocabulary</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-6">Vocabulaire</h2>
               {vocabulary.length === 0 ? (
                 <div className="bg-slate-50 rounded-2xl p-12 text-center">
-                  <p className="text-slate-600">No vocabulary available for this lesson.</p>
+                  <p className="text-slate-600">Aucun vocabulaire disponible pour cette leçon.</p>
                 </div>
               ) : (
                 <div className="grid gap-4">
                   {vocabulary.map((word, index) => (
-                    <div key={word.id} className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition border-l-4 border-emerald-500">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
+                    <div key={word.id} className="bg-white rounded-2xl p-4 md:p-6 shadow-sm hover:shadow-md transition border-l-4 border-emerald-500">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-3 mb-2">
-                          <span className="w-8 h-8 bg-emerald-600 text-white rounded-lg flex items-center justify-center text-sm font-bold">
+                          <span className="w-7 h-7 md:w-8 md:h-8 bg-emerald-600 text-white rounded-lg flex items-center justify-center text-xs md:text-sm font-bold flex-shrink-0">
                             {index + 1}
                           </span>
-                            <h3 className="text-xl font-bold text-emerald-700">{word.word}</h3>
+                            <h3 className="text-base md:text-xl font-bold text-emerald-700">{word.word}</h3>
                           </div>
-                          <p className="text-sm text-slate-600 mb-3">{word.french_meaning}</p>
-                          <div className="bg-slate-50 rounded-lg p-4 space-y-2">
-                            <p className="text-sm text-slate-700">
+                          <p className="text-xs md:text-sm text-slate-600 mb-3">{word.french_meaning}</p>
+                          <div className="bg-slate-50 rounded-lg p-3 md:p-4 space-y-2">
+                            <p className="text-xs md:text-sm text-slate-700">
                               <span className="font-semibold">English:</span> {word.example_en}
                             </p>
-                            <p className="text-sm text-slate-700">
+                            <p className="text-xs md:text-sm text-slate-700">
                               <span className="font-semibold">Français:</span> {word.example_fr}
                             </p>
                           </div>
                         </div>
-                        <Volume2 size={24} className="text-emerald-600 flex-shrink-0 mt-2" />
+                        <button
+                          onClick={() => handleSpeak(word.word, word.id)}
+                          disabled={speakingWord === word.id}
+                          className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                          title="Pronounce word"
+                        >
+                          <Volume2 className={`h-4 w-4 ${speakingWord === word.id ? 'animate-pulse' : ''}`} />
+                        </button>
                       </div>
                     </div>
                   ))}
+                </div>
+                <div className="flex gap-3 mt-6 flex-col-reverse sm:flex-row">
+                  <button
+                    onClick={goToPrevTab}
+                    disabled={!canGoPrev}
+                    className="flex-1 px-6 py-3 border-2 border-slate-300 text-slate-700 rounded-xl hover:border-slate-400 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    ← Previous
+                  </button>
+                  <button
+                    onClick={goToNextTab}
+                    disabled={!canGoNext}
+                    className="flex-1 px-6 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Suivant: Quiz →
+                  </button>
                 </div>
               )}
             </div>
@@ -439,10 +500,10 @@ export default function LessonDetailPage() {
           {/* Quiz Tab */}
           {activeTab === 'quiz' && (
             <div className="space-y-6 animate-fade-in">
-              <h2 className="text-2xl font-bold text-slate-800 mb-6">Quiz</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-6">Quiz</h2>
               {quizQuestions.length === 0 ? (
                 <div className="bg-slate-50 rounded-2xl p-12 text-center">
-                  <p className="text-slate-600">No quiz available for this lesson yet.</p>
+                  <p className="text-slate-600">Aucun quiz disponible pour cette leçon pour le moment.</p>
                 </div>
               ) : (
                 <>
@@ -459,22 +520,30 @@ export default function LessonDetailPage() {
                         Score: {score} / {quizQuestions.length}
                       </p>
                       <p className={`text-sm mb-4 ${score >= quizQuestions.length * 0.7 ? 'text-green-600' : 'text-yellow-600'}`}>
-                        {score >= quizQuestions.length * 0.7 ? '🎉 Great job!' : 'Keep practicing!'}
+                        {score >= quizQuestions.length * 0.7 ? '🎉 Excellent !' : 'Continue à pratiquer !'}
                       </p>
-                      <button
-                        onClick={resetQuiz}
-                        className="px-6 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition"
-                      >
-                        Retake Quiz
-                      </button>
+                      <div className="flex gap-3 flex-col-reverse sm:flex-row mt-6">
+                        <button
+                          onClick={resetQuiz}
+                          className="flex-1 px-6 py-3 border-2 border-slate-300 text-slate-700 rounded-xl hover:border-slate-400 transition font-semibold"
+                        >
+                          Reprendre le Quiz
+                        </button>
+                        <button
+                          onClick={handleFinishLesson}
+                          className="flex-1 px-6 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition font-semibold"
+                        >
+                          ✓ Terminer la leçon
+                        </button>
+                      </div>
                     </div>
                   )}
 
                   <div className="space-y-6">
                     {quizQuestions.map((question, index) => (
-                      <div key={question.id} className="bg-white rounded-2xl p-6 shadow-sm">
-                        <h3 className="text-lg font-bold text-slate-800 mb-4">
-                          <span className="w-8 h-8 bg-emerald-600 text-white rounded-lg flex items-center justify-center text-sm font-bold mr-3">
+                      <div key={question.id} className="bg-white rounded-2xl p-4 md:p-6 shadow-sm">
+                        <h3 className="text-base md:text-lg font-bold text-slate-800 mb-4">
+                          <span className="w-7 h-7 md:w-8 md:h-8 bg-emerald-600 text-white rounded-lg flex items-center justify-center text-xs md:text-sm font-bold mr-3 inline-flex">
                             {index + 1}
                           </span>
                           {question.question}
@@ -501,7 +570,7 @@ export default function LessonDetailPage() {
                                 key={optIndex}
                                 onClick={() => handleAnswerSelect(question.id, option)}
                                 disabled={quizSubmitted}
-                                className={`w-full text-left p-4 rounded-xl transition ${buttonStyle} ${quizSubmitted ? 'cursor-default' : 'cursor-pointer'}`}
+                                className={`w-full text-left p-3 md:p-4 rounded-xl transition text-sm md:text-base ${buttonStyle} ${quizSubmitted ? 'cursor-default' : 'cursor-pointer'}`}
                               >
                                 <div className="flex items-center gap-3">
                                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
@@ -523,9 +592,9 @@ export default function LessonDetailPage() {
                         </div>
 
                         {quizSubmitted && (
-                          <div className={`mt-4 p-4 rounded-lg ${quizAnswers[question.id] === question.correct_answer ? 'bg-green-50 border border-green-200' : 'bg-blue-50 border border-blue-200'}`}>
-                            <p className={`text-sm ${quizAnswers[question.id] === question.correct_answer ? 'text-green-700' : 'text-blue-700'}`}>
-                              <span className="font-semibold">Explanation:</span> {question.explanation}
+                          <div className={`mt-4 p-3 md:p-4 rounded-lg text-sm md:text-base ${quizAnswers[question.id] === question.correct_answer ? 'bg-green-50 border border-green-200' : 'bg-blue-50 border border-blue-200'}`}>
+                            <p className={`${quizAnswers[question.id] === question.correct_answer ? 'text-green-700' : 'text-blue-700'}`}>
+                              <span className="font-semibold">Explication :</span> {question.explanation}
                             </p>
                           </div>
                         )}
@@ -537,14 +606,26 @@ export default function LessonDetailPage() {
                     <button
                       onClick={submitQuiz}
                       disabled={Object.keys(quizAnswers).length !== quizQuestions.length}
-                      className={`w-full py-4 px-6 rounded-xl font-semibold text-white transition ${
+                      className={`w-full py-4 px-6 rounded-xl font-semibold text-white transition text-base md:text-lg ${
                         Object.keys(quizAnswers).length === quizQuestions.length
                           ? 'bg-emerald-600 hover:bg-emerald-700'
                           : 'bg-slate-400 cursor-not-allowed'
                       }`}
                     >
-                      Submit Quiz ({Object.keys(quizAnswers).length} / {quizQuestions.length})
+                      Soumettre le Quiz ({Object.keys(quizAnswers).length} / {quizQuestions.length})
                     </button>
+                  )}
+
+                  {!quizSubmitted && (
+                    <div className="flex gap-3 mt-4 flex-col-reverse sm:flex-row">
+                      <button
+                        onClick={goToPrevTab}
+                        disabled={!canGoPrev}
+                        className="flex-1 px-6 py-3 border-2 border-slate-300 text-slate-700 rounded-xl hover:border-slate-400 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        ← Précédent
+                      </button>
+                    </div>
                   )}
                 </>
               )}

@@ -10,7 +10,8 @@ INSERT INTO lessons (title, description, content, level, order_index) VALUES
 ('Couleurs essentielles', 'Les couleurs les plus communes en anglais', 'Red (Rouge), Blue (Bleu), Green (Vert), Yellow (Jaune), Black (Noir), White (Blanc), Pink (Rose), Orange (Orange), Purple (Violet), Brown (Marron)', 'beginner', 5),
 ('Métiers courants', 'Les métiers et professions en anglais', 'Doctor (Médecin), Teacher (Enseignant), Engineer (Ingénieur), Nurse (Infirmière), Lawyer (Avocat), Chef (Cuisinier), Police Officer (Agent de police), Farmer (Fermier)', 'beginner', 6),
 ('Aliments communs', 'Vocabulaire des aliments et boissons', 'Apple (Pomme), Bread (Pain), Chicken (Poulet), Rice (Riz), Water (Eau), Coffee (Café), Milk (Lait), Egg (Œuf), Fish (Poisson), Cheese (Fromage)', 'beginner', 7),
-('Parties du corps', 'Apprenez les parties du corps humain', 'Head (Tête), Eye (Œil), Nose (Nez), Mouth (Bouche), Ear (Oreille), Arm (Bras), Hand (Main), Leg (Jambe), Foot (Pied), Heart (Cœur)', 'beginner', 8);
+('Parties du corps', 'Apprenez les parties du corps humain', 'Head (Tête), Eye (Œil), Nose (Nez), Mouth (Bouche), Ear (Oreille), Arm (Bras), Hand (Main), Leg (Jambe), Foot (Pied), Heart (Cœur)', 'beginner', 8),
+('Animaux domestiques', 'Découvrez les noms des animaux familiers en anglais', 'Dog (Chien), Cat (Chat), Bird (Oiseau), Fish (Poisson), Rabbit (Lapin), Hamster (Hamster), Parrot (Perroquet), Turtle (Tortue), Mouse (Souris), Horse (Cheval)', 'beginner', 9);
 
 -- Insert vocabulary for Lesson 1: Salutations
 INSERT INTO vocabulary (lesson_id, word, french_meaning, example_en, example_fr) VALUES
@@ -43,6 +44,14 @@ INSERT INTO vocabulary (lesson_id, word, french_meaning, example_en, example_fr)
 ((SELECT id FROM lessons WHERE order_index = 5), 'Green', 'Vert', 'The tree is green', 'L''arbre est vert'),
 ((SELECT id FROM lessons WHERE order_index = 5), 'Yellow', 'Jaune', 'The sun is yellow', 'Le soleil est jaune'),
 ((SELECT id FROM lessons WHERE order_index = 5), 'Black', 'Noir', 'The night is black', 'La nuit est noire');
+
+-- Insert vocabulary for Lesson 9: Pets
+INSERT INTO vocabulary (lesson_id, word, french_meaning, example_en, example_fr) VALUES
+((SELECT id FROM lessons WHERE order_index = 9), 'Dog', 'Chien', 'I have a dog', 'J''ai un chien'),
+((SELECT id FROM lessons WHERE order_index = 9), 'Cat', 'Chat', 'The cat is sleeping', 'Le chat dort'),
+((SELECT id FROM lessons WHERE order_index = 9), 'Bird', 'Oiseau', 'The bird is singing', 'L''oiseau chante'),
+((SELECT id FROM lessons WHERE order_index = 9), 'Fish', 'Poisson', 'I have three fish', 'J''ai trois poissons'),
+((SELECT id FROM lessons WHERE order_index = 9), 'Rabbit', 'Lapin', 'The rabbit is cute', 'Le lapin est mignon');
 
 -- Insert sample quiz questions for Lesson 1
 INSERT INTO quiz_questions (lesson_id, question, options, correct_answer, explanation) VALUES
@@ -80,7 +89,25 @@ INSERT INTO quiz_questions (lesson_id, question, options, correct_answer, explan
 'Ten', 
 'Ten est le mot pour 10. Bonne réponse!');
 
+-- Insert sample quiz questions for Lesson 9: Pets
+INSERT INTO quiz_questions (lesson_id, question, options, correct_answer, explanation) VALUES
+((SELECT id FROM lessons WHERE order_index = 9), 
+'Comment dit-on "chien" en anglais?', 
+'["Cat", "Dog", "Bird", "Fish"]', 
+'Dog', 
+'Dog signifie "chien". Correct!'),
+((SELECT id FROM lessons WHERE order_index = 9), 
+'Quel animal dit "meow" en anglais?', 
+'["Dog", "Bird", "Cat", "Rabbit"]', 
+'Cat', 
+'Cat = Chat. Le chat dit "meow". Bravo!'),
+((SELECT id FROM lessons WHERE order_index = 9), 
+'Quel est le mot anglais pour "oiseau"?', 
+'["Fish", "Bird", "Dog", "Hamster"]', 
+'Bird', 
+'Bird est le mot pour "oiseau". Excellent!');
+
 -- Note: To view the data you added, go to Supabase and check:
--- 1. lessons table (should have 8 lessons)
+-- 1. lessons table (should have 9 lessons now)
 -- 2. vocabulary table (should have many words)
--- 3. quiz_questions table (should have 6 questions)
+-- 3. quiz_questions table (should have quiz entries)

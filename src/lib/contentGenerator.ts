@@ -26,20 +26,22 @@ export async function generateLesson(
   topic?: string
 ): Promise<GeneratedLesson> {
   const prompt = `
-You are an English language teacher. Generate a single comprehensive English lesson in JSON format.
+You are an English language teacher for French-speaking students. Generate a single comprehensive English lesson in JSON format.
 
 Requirements:
 - Level: ${level}
 - Topic: ${topic || 'random useful English topic'}
 - Output ONLY valid JSON, no markdown, no explanations
 - JSON must have exactly these fields: title, description, content, level
+- title and description must be in French
+- content must be in English
 
 The content should be educational, practical, and about 200-300 words.
 
 Example output format:
 {
-  "title": "Basic Greetings",
-  "description": "Learn essential English greetings and how to introduce yourself",
+  "title": "Salutations de base",
+  "description": "Apprenez les salutations essentielles en anglais",
   "content": "In English, we greet people with...",
   "level": "beginner"
 }
@@ -61,7 +63,7 @@ export async function generateVocabularyForLesson(
   level: 'beginner' | 'intermediate' | 'advanced'
 ): Promise<GeneratedVocabulary[]> {
   const prompt = `
-You are an English vocabulary teacher. Generate 8 vocabulary words for this lesson in JSON format.
+You are an English vocabulary teacher for French-speaking students. Generate vocabulary words for this lesson in JSON format.
 
 Lesson: ${lessonTitle}
 Level: ${level}
@@ -69,6 +71,8 @@ Level: ${level}
 Requirements:
 - Output ONLY valid JSON array, no markdown, no explanations
 - Each item must have: word, french_meaning, example_en, example_fr
+- french_meaning and example_fr must be in French
+- example_en must be in English
 - Examples should be simple sentences (10-15 words max)
 - All words should be relevant to the lesson topic
 
@@ -100,7 +104,7 @@ export async function generateQuizForLesson(
   vocabulary: string[]
 ): Promise<GeneratedQuizQuestion[]> {
   const prompt = `
-You are an English teacher creating quiz questions. Generate 5 multiple-choice quiz questions in JSON format.
+You are an English teacher creating quiz questions for French-speaking students. Generate 5 multiple-choice quiz questions in JSON format.
 
 Lesson: ${lessonTitle}
 Vocabulary to test: ${vocabulary.join(', ')}
@@ -108,7 +112,8 @@ Vocabulary to test: ${vocabulary.join(', ')}
 Requirements:
 - Output ONLY valid JSON array, no markdown, no explanations
 - Each question must have: question, options (array of 4), correct_answer, explanation
-- The correct_answer must be one of the options exactly as written
+- question and explanation must be in French
+- correct_answer must match one of the options exactly
 - Options should be plausible but not confusing
 - Explanations should be brief (1-2 sentences)
 - Questions should test understanding, not just memorization
@@ -116,10 +121,10 @@ Requirements:
 Example output format:
 [
   {
-    "question": "What does 'hello' mean?",
+    "question": "Que signifie 'hello' ?",
     "options": ["Goodbye", "Bonjour", "Thank you", "Please"],
     "correct_answer": "Bonjour",
-    "explanation": "Hello is a greeting that means Bonjour in French."
+    "explanation": "Hello est une salutation qui signifie Bonjour en francais."
   },
   ...
 ]
